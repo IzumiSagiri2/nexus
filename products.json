@@ -2,13 +2,33 @@
   {
     "id": "prod-1773286045009hlop06jcapf",
     "name": "Am Premium 1 Thun",
-    "type": "panel",
+    "type": "download",
     "category": "Akun Premium",
     "thumbnail": "https://nexus.dongtube.my.id/cdn/1ef4aef207ac8276.jpeg",
     "description": "untuk login lewat web biar ga salah paham dan komplen nanti ada tutorial cara loginya lewat web video ",
     "active": true,
     "isNew": true,
-    "variants": []
+    "variants": [
+      {
+        "id": "v-1773286187892",
+        "name": "",
+        "description": "",
+        "price": 1000,
+        "plan": "1gb",
+        "days": 30,
+        "daysOptions": [
+          7,
+          14,
+          30
+        ],
+        "dayPrices": {
+          "7": 0,
+          "14": 0,
+          "30": 0
+        },
+        "stock": -1
+      }
+    ]
   },
   {
     "id": "prod-1772882338253xqgknuay22i",
