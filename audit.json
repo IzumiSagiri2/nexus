@@ -1,5 +1,11 @@
 [
   {
+    "ts": 1773288050969,
+    "action": "delete-trx",
+    "detail": "TRX-1773287245679-2b2e2989",
+    "ip": "114.10.99.134"
+  },
+  {
     "ts": 1773207926364,
     "action": "login",
     "detail": "Admin login dari 114.10.99.134",
