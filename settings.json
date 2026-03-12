@@ -11,7 +11,7 @@
   "instagram": "",
   "otpEnabled": true,
   "panelEnabled": true,
-  "maintenanceMode": true,
+  "maintenanceMode": false,
   "maintenanceMsg": "Sedang dalam maintenance.",
   "musicUrl": "",
   "musicEnabled": false,
