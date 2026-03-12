@@ -284,5 +284,31 @@
       "backups": 5,
       "allocations": 5
     }
+  },
+  {
+    "id": "11gb",
+    "name": "11GB",
+    "active": true,
+    "ram": 11000,
+    "disk": 25000,
+    "cpu": 7000,
+    "io": 500,
+    "swap": 0,
+    "egg": 15,
+    "nest": 5,
+    "location": 1,
+    "docker_image": "ghcr.io/parkervcp/yolks:nodejs_20",
+    "startup": "",
+    "environment": {
+      "INST": "npm",
+      "USER_UPLOAD": "0",
+      "AUTO_UPDATE": "0",
+      "CMD_RUN": "npm start"
+    },
+    "feature_limits": {
+      "databases": 5,
+      "backups": 5,
+      "allocations": 5
+    }
   }
 ]
