@@ -1,5 +1,16 @@
 [
   {
+    "id": "prod-1773286045009hlop06jcapf",
+    "name": "Am Premium 1 Thun",
+    "type": "panel",
+    "category": "Akun Premium",
+    "thumbnail": "",
+    "description": "",
+    "active": true,
+    "isNew": true,
+    "variants": []
+  },
+  {
     "id": "prod-1772882338253xqgknuay22i",
     "name": "Auto Order Telegram",
     "type": "download",
