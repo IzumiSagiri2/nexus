@@ -178,6 +178,8 @@ var selectedFile = null;
 var recentUploads = [];
 try { recentUploads = JSON.parse(localStorage.getItem('cdn_recent') || '[]'); } catch(e) {}
 
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
 function toast(msg, type) {
   var el = document.getElementById('toast');
   el.textContent = msg;
@@ -344,16 +346,17 @@ function renderRecent() {
         var t = document.createElement('textarea'); t.value = item.url; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); toast('URL disalin!');
       });
     };
+    var safeUrl = esc(item.url || '');
     var thumbHtml = '';
-    if (item.isImage) {
-      thumbHtml = '<img style="width:34px;height:34px;border-radius:6px;object-fit:cover;flex-shrink:0" src="' + item.url + '" onerror="this.style.display=\'none\'" alt="">';
+    if (item.isImage && item.url && item.url.startsWith('http')) {
+      thumbHtml = '<img style="width:34px;height:34px;border-radius:6px;object-fit:cover;flex-shrink:0" src="' + safeUrl + '" onerror="this.style.display=\'none\'" alt="">';
     } else {
       thumbHtml = '<div class="recent-thumb">' + _fileIconSvg + '</div>';
     }
     div.innerHTML = thumbHtml
       + '<div class="recent-info">'
-      + '<div class="recent-name">' + (item.name || 'file') + '</div>'
-      + '<div class="recent-url">' + item.url + '</div>'
+      + '<div class="recent-name">' + esc(item.name || 'file') + '</div>'
+      + '<div class="recent-url">' + safeUrl + '</div>'
       + '</div>';
     list.appendChild(div);
   });

@@ -111,12 +111,13 @@ body{overflow:hidden}
 .tb-btn:hover{border-color:var(--line3);background:var(--bg2)}
 .tb-btn.em-btn{border-color:rgba(var(--em-rgb),.35);background:rgba(var(--em-rgb),.1);color:var(--em);font-weight:700}
 .tb-btn.em-btn:hover{background:rgba(var(--em-rgb),.18)}
-/* Reseller action buttons — dropdown di mobile, inline di desktop */
+/* Reseller action buttons — dropdown pakai fixed-portal agar tidak terpotong oleh overflow tabel */
 .rs-actions{position:relative;display:inline-block}
 .rs-actions-btn{padding:.28rem .6rem;border-radius:6px;border:1px solid var(--line2);background:var(--bg3);color:var(--t1);font-family:var(--font);font-size:.62rem;font-weight:600;cursor:pointer;white-space:nowrap;min-height:26px;display:flex;align-items:center;gap:.3rem}
 .rs-actions-btn:hover{border-color:var(--line3);background:var(--bg2)}
 .rs-actions-btn svg{flex-shrink:0}
-.rs-dropdown{display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--bg1);border:1px solid var(--line2);border-radius:10px;box-shadow:0 16px 48px rgba(0,0,0,.85);z-index:999;min-width:150px;overflow:hidden}
+/* BUG FIX: dropdown pakai position:fixed via JS portal agar tidak terpotong overflow tabel */
+.rs-dropdown{display:none;position:fixed;background:var(--bg1);border:1px solid var(--line2);border-radius:10px;box-shadow:0 16px 48px rgba(0,0,0,.85);z-index:9990;min-width:165px;overflow:hidden}
 .rs-dropdown.open{display:block}
 .rs-drop-item{display:block;width:100%;padding:.55rem .85rem;background:none;border:none;color:var(--t1);font-family:var(--font);font-size:.7rem;font-weight:500;cursor:pointer;text-align:left;transition:background .12s;white-space:nowrap}
 .rs-drop-item:hover{background:var(--bg3)}
@@ -489,20 +490,22 @@ body{overflow:hidden}
     <!-- ══ TAB: PANEL ══ -->
     <div class="tab" id="tabPanels">
       <div class="toolbar">
-        <button class="tb-f on" id="pfAll"    onclick="setPanelFilter('all',this)">Semua</button>
-        <button class="tb-f"    id="pfActive" onclick="setPanelFilter('active',this)">Aktif</button>
-        <button class="tb-f"    id="pfSusp"   onclick="setPanelFilter('suspended',this)">Suspended</button>
-        <button class="tb-f"    id="pfExp"    onclick="setPanelFilter('expired',this)">Expired</button>
-        <input class="tb-search" id="panelSearch" placeholder="Cari username / server ID..." oninput="renderPanelTable()">
+        <button class="tb-f on" id="pfAll"      onclick="setPanelFilter('all',this)">Semua</button>
+        <button class="tb-f"    id="pfNormal"   onclick="setPanelFilter('normal',this)">Normal</button>
+        <button class="tb-f"    id="pfReseller" onclick="setPanelFilter('reseller',this)">Reseller</button>
+        <button class="tb-f"    id="pfActive"   onclick="setPanelFilter('active',this)">Aktif</button>
+        <button class="tb-f"    id="pfSusp"     onclick="setPanelFilter('suspended',this)">Suspended</button>
+        <button class="tb-f"    id="pfExp"      onclick="setPanelFilter('expired',this)">Expired</button>
+        <input class="tb-search" id="panelSearch" placeholder="Cari username / reseller / server ID..." oninput="renderPanelTable()">
         <span class="tb-count" id="panelCount">— server</span>
       </div>
       <div class="tbl-wrap" style="overflow-x:auto">
         <table class="tbl">
           <thead><tr>
-            <th>Server ID</th><th>Username</th><th>Paket</th><th>RAM/Disk/CPU</th>
+            <th>Server ID</th><th>Username</th><th>Sumber</th><th>Paket</th><th>RAM/Disk/CPU</th>
             <th>Expiry</th><th>Sisa</th><th>Status</th><th>Aksi</th>
           </tr></thead>
-          <tbody id="panelBody"><tr><td colspan="8" class="tbl-empty"><span class="ld"><span></span><span></span><span></span></span> Memuat...</td></tr></tbody>
+          <tbody id="panelBody"><tr><td colspan="9" class="tbl-empty"><span class="ld"><span></span><span></span><span></span></span> Memuat...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -1032,6 +1035,16 @@ body{overflow:hidden}
 
     <!-- ══ TAB: MONITOR SERVER ══ -->
     <div class="tab" id="tabMonitor">
+      <!-- DB Backend Info -->
+      <div class="section" style="margin-bottom:.75rem">
+        <div class="sec-head" style="display:flex;justify-content:space-between;align-items:center">
+          <span class="sec-title">Konfigurasi Sistem</span>
+          <button class="tb-btn" onclick="loadSystemInfo()">↻ Refresh</button>
+        </div>
+        <div id="sysInfoWrap" style="padding:.7rem .9rem;font-size:.68rem;color:var(--t2);line-height:2">
+          <span class="ld"><span></span><span></span><span></span></span> Memuat...
+        </div>
+      </div>
       <!-- Metrics -->
       <div class="section">
         <div class="sec-head" style="display:flex;justify-content:space-between;align-items:center">
@@ -1284,15 +1297,19 @@ body{overflow:hidden}
         </div>
       </div>
 
-      <!-- Daftar Reseller -->
+      <!-- Daftar Akun Reseller -->
       <div class="section" style="margin-top:.5rem">
         <div class="sec-head" style="cursor:default;flex-wrap:wrap;gap:.4rem">
-          <span class="sec-title">Daftar Reseller</span>
+          <span class="sec-title">Daftar Akun Reseller</span>
           <div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-left:auto">
             <input class="tb-search" id="rsSearch" placeholder="Cari username..." oninput="renderResellersTable()" style="max-width:180px;min-width:120px">
             <button class="tb-btn" onclick="loadResellers()">↻ Muat</button>
-            <a href="/cpanel" target="_blank" class="tb-btn" style="text-decoration:none">cPanel</a>
+            <a href="/cpanel" target="_blank" class="tb-btn" style="text-decoration:none">cPanel Reseller</a>
           </div>
+        </div>
+        <div style="font-size:.6rem;color:var(--t3);padding:.25rem .85rem .4rem">
+          Kelola semua panel (normal + reseller) dalam satu tabel di tab
+          <b style="cursor:pointer;color:var(--em)" onclick="showTab('panels')">Panel ↗</b>
         </div>
         <div class="tbl-wrap" style="overflow-x:auto">
           <table class="tbl">
@@ -1837,12 +1854,12 @@ function loadCurrentTab(force) {
   else if (currentTab === 'settings')    loadSettings();
   else if (currentTab === 'users')       loadUsers();
   else if (currentTab === 'panel-tpl')   loadPanelTemplates();
-  else if (currentTab === 'monitor')     loadMonitor();
+  else if (currentTab === 'monitor')     { loadMonitor(); loadSystemInfo(); }
   else if (currentTab === 'analytics')   loadAnalytics();
   else if (currentTab === 'vouchers')    loadVouchers();
   else if (currentTab === 'sewabot')     loadSewabotOrders();
   else if (currentTab === 'deposits')    loadAdminDeposits();
-  else if (currentTab === 'reseller')    loadResellers();
+  else if (currentTab === 'reseller')    { loadResellers(); }
 }
 
 // ── ADMIN BATCH FETCH: 1 request gabungan untuk data yang sering dipakai sama
@@ -2099,13 +2116,13 @@ async function deleteSelectedTrx() {
 var panelData = [], panelFilter = 'all';
 
 async function loadPanels() {
-  document.getElementById('panelBody').innerHTML = '<tr><td colspan="8" class="tbl-empty"><span class="ld"><span></span><span></span><span></span></span> Memuat dari Pterodactyl...</td></tr>';
+  document.getElementById('panelBody').innerHTML = '<tr><td colspan="9" class="tbl-empty"><span class="ld"><span></span><span></span><span></span></span> Memuat dari Pterodactyl...</td></tr>';
   try {
     var j = await aFetch('GET', '/api/admin/panels');
-    if (!j.ok) { document.getElementById('panelBody').innerHTML = '<tr><td colspan="8" class="tbl-empty">Error: ' + esc(j.message) + '</td></tr>'; return; }
+    if (!j.ok) { document.getElementById('panelBody').innerHTML = '<tr><td colspan="9" class="tbl-empty">Error: ' + esc(j.message) + '</td></tr>'; return; }
     panelData = j.data || [];
     renderPanelTable();
-  } catch(e) { document.getElementById('panelBody').innerHTML = '<tr><td colspan="8" class="tbl-empty">Koneksi error.</td></tr>'; }
+  } catch(e) { document.getElementById('panelBody').innerHTML = '<tr><td colspan="9" class="tbl-empty">Koneksi error.</td></tr>'; }
 }
 
 function setPanelFilter(f, el) {
@@ -2118,15 +2135,16 @@ function setPanelFilter(f, el) {
 function renderPanelTable() {
   var q = (document.getElementById('panelSearch').value || '').toLowerCase();
   var rows = panelData.filter(function(p) {
+    if (panelFilter === 'normal'    && p.source !== 'normal')    return false;
+    if (panelFilter === 'reseller'  && p.source !== 'reseller')  return false;
     if (panelFilter === 'active'    && (p.suspended || p.expired)) return false;
     if (panelFilter === 'suspended' && !p.suspended) return false;
     if (panelFilter === 'expired'   && !p.expired)   return false;
-    if (q) return (String(p.serverId) + (p.username||'') + (p.plan||'')).toLowerCase().includes(q);
+    if (q) return (String(p.serverId) + (p.username||'') + (p.plan||'') + (p._resellerUsername||'')).toLowerCase().includes(q);
     return true;
   });
   document.getElementById('panelCount').textContent = rows.length + ' server';
-  if (!rows.length) { document.getElementById('panelBody').innerHTML = '<tr><td colspan="8" class="tbl-empty">Tidak ada data.</td></tr>'; return; }
-  var now = Date.now();
+  if (!rows.length) { document.getElementById('panelBody').innerHTML = '<tr><td colspan="9" class="tbl-empty">Tidak ada data.</td></tr>'; return; }
   window._panelRows = rows;
   document.getElementById('panelBody').innerHTML = rows.map(function(p, ri) {
     var dl = p.daysLeft;
@@ -2134,9 +2152,16 @@ function renderPanelTable() {
     var dlText  = dl === null ? '—' : dl <= 0 ? 'Expired' : dl + ' hari';
     var stClass = p.suspended ? 's-suspended' : p.expired ? 's-expired' : 's-active';
     var stText  = p.suspended ? 'Suspended' : p.expired ? 'Expired' : 'Aktif';
+    // Source badge
+    var srcBadge = p.source === 'reseller'
+      ? '<span style="font-size:.55rem;font-weight:700;color:var(--pur);background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.3);padding:.1rem .4rem;border-radius:4px">Reseller</span>'
+        + (p._resellerUsername ? '<br><span style="font-size:.55rem;color:var(--t3)">@' + esc(p._resellerUsername) + '</span>' : '')
+        + (p._notInPtero ? '<br><span style="font-size:.5rem;color:var(--yel)">⚠ Tidak ada di Ptero</span>' : '')
+      : '<span style="font-size:.55rem;font-weight:700;color:var(--em);background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);padding:.1rem .4rem;border-radius:4px">Normal</span>';
     return '<tr>'
-      + '<td style="font-family:monospace">' + p.serverId + '</td>'
+      + '<td style="font-family:monospace">' + esc(String(p.serverId)) + '</td>'
       + '<td style="font-weight:700">@' + esc(p.username || '—') + '</td>'
+      + '<td>' + srcBadge + '</td>'
       + '<td>' + esc((p.plan||'—').toUpperCase()) + '</td>'
       + '<td style="font-size:.65rem;color:var(--t2)">' + esc((p.ram||'—') + ' / ' + (p.disk||'—') + ' / ' + (p.cpu||'—')) + '</td>'
       + '<td style="font-size:.65rem">' + fmtDateShort(p.expiresAt) + '</td>'
@@ -2156,52 +2181,103 @@ function openPanelDrawerByIdx(idx) {
 }
 
 function openPanelDrawer(p) {
-  var html = [
-    ['Server ID', p.serverId], ['Username', '@' + (p.username||'—')], ['Paket', (p.plan||'—').toUpperCase()],
+  var isReseller = !!p._isReseller;
+  var infoRows = [
+    ['Server ID', p.serverId],
+    ['Username', '@' + (p.username||'—')],
+    ['Sumber', isReseller ? '🤝 Reseller' : '🛒 Normal'],
+  ];
+  if (isReseller) infoRows.push(['Reseller', '@' + (p._resellerUsername||'—')]);
+  infoRows = infoRows.concat([
+    ['Paket', (p.plan||'—').toUpperCase()],
     ['RAM', p.ram||'—'], ['Disk', p.disk||'—'], ['CPU', p.cpu||'—'],
-    ['Status', p.status], ['Suspended', p.suspended ? 'Ya' : 'Tidak'],
+    ['Status', p.status||'—'], ['Suspended', p.suspended ? 'Ya' : 'Tidak'],
     ['Expired', p.expired ? 'Ya' : 'Tidak'], ['Expiry', fmtDateShort(p.expiresAt)],
-    ['Sisa Hari', p.daysLeft !== null ? p.daysLeft + ' hari' : '—'],
-    ['ID Transaksi', p.trxId||'—'], ['Diperpanjang', fmtDate(p.renewedAt)],
-    ['+Hari Admin', p.adminExtended ? p.adminExtended + ' hari' : '—'],
-  ].map(function(rv){ return '<div class="dr-row"><span class="dr-k">' + esc(rv[0]) + '</span><span class="dr-v">' + esc(rv[1]) + '</span></div>'; }).join('');
+    ['Sisa Hari', p.daysLeft !== null && p.daysLeft !== undefined ? p.daysLeft + ' hari' : '—'],
+  ]);
+  if (!isReseller) {
+    infoRows.push(['ID Transaksi', p.trxId||'—']);
+    if (p.renewedAt) infoRows.push(['Diperpanjang', fmtDate(p.renewedAt)]);
+    if (p.adminExtended) infoRows.push(['+Hari Admin', p.adminExtended + ' hari']);
+  } else {
+    infoRows.push(['RSV ID', p._rsvId||'—']);
+  }
+  if (p._notInPtero) infoRows.push(['⚠️ Peringatan', 'Server tidak ditemukan di Pterodactyl']);
 
-  // Extend section
-  html += '<div class="dr-sep">Perpanjang Kontrak</div>';
-  html += '<div class="dr-inp-wrap"><label class="dr-label">Tambah berapa hari</label><input class="dr-inp" type="number" id="drExtDays" min="1" max="365" placeholder="contoh: 30"></div>';
-  html += '<button class="dr-btn em" onclick="extendPanel(' + p.serverId + ')">Perpanjang</button>';
+  var html = infoRows.map(function(rv){
+    return '<div class="dr-row"><span class="dr-k">' + esc(rv[0]) + '</span><span class="dr-v">' + esc(String(rv[1]||'—')) + '</span></div>';
+  }).join('');
 
-  // Reset password
-  html += '<div class="dr-sep">Reset Password</div>';
-  html += '<div class="dr-inp-wrap"><label class="dr-label">Password baru (min 6 karakter)</label><input class="dr-inp" type="text" id="drNewPwd" placeholder="password baru..."></div>';
-  html += '<button class="dr-btn sky" onclick="resetPanelPwd(' + p.serverId + ')">Reset Password</button>';
-
-  // Suspend / Unsuspend / Reinstall / Delete
-  html += '<div class="dr-sep">Kontrol Server</div>';
-  html += '<div class="dr-actions">';
-  if (!p.suspended) html += '<button class="dr-btn yel" onclick="suspendPanel(' + p.serverId + ',true)">Suspend Server</button>';
-  else              html += '<button class="dr-btn em"  onclick="suspendPanel(' + p.serverId + ',false)">Unsuspend Server</button>';
-  html += '<button class="dr-btn sky" onclick="reinstallPanel(' + p.serverId + ')">Reinstall Server</button>';
-  html += '<button class="dr-btn red" id="delPanelBtn2">Hapus Server + User</button>';
+  // Kelola Kontrak: Perpanjang + Kurangi
+  html += '<div class="dr-sep">Kelola Kontrak</div>';
+  html += '<div class="dr-inp-wrap"><label class="dr-label">Jumlah hari (perpanjang atau kurangi)</label><input class="dr-inp" type="number" id="drExtDays" min="1" max="3650" placeholder="contoh: 30"></div>';
+  html += '<div class="dr-actions" style="gap:.5rem">';
+  html += '<button class="dr-btn em" onclick="extendPanelUnified(' + p.serverId + ',\'' + esc(p._rsvId||'') + '\',' + isReseller + ')">+ Perpanjang</button>';
+  html += '<button class="dr-btn red" onclick="reducePanelUnified(' + p.serverId + ',\'' + esc(p._rsvId||'') + '\',' + isReseller + ')">− Kurangi</button>';
   html += '</div>';
 
-  openDrawer('Kelola Panel — @' + (p.username||p.serverId), html);
+  // Reset password (hanya jika ada di Ptero)
+  if (!p._notInPtero) {
+    html += '<div class="dr-sep">Reset Password</div>';
+    html += '<div class="dr-inp-wrap"><label class="dr-label">Password baru (min 6 karakter)</label><input class="dr-inp" type="text" id="drNewPwd" placeholder="password baru..."></div>';
+    html += '<button class="dr-btn sky" onclick="resetPanelPwd(' + p.serverId + ')">Reset Password</button>';
+  }
+
+  // Kontrol Server
+  if (!p._notInPtero) {
+    html += '<div class="dr-sep">Kontrol Server</div>';
+    html += '<div class="dr-actions">';
+    if (!p.suspended) html += '<button class="dr-btn yel" onclick="suspendPanel(' + p.serverId + ',true)">Suspend Server</button>';
+    else              html += '<button class="dr-btn em"  onclick="suspendPanel(' + p.serverId + ',false)">Unsuspend Server</button>';
+    if (!isReseller)  html += '<button class="dr-btn sky" onclick="reinstallPanel(' + p.serverId + ')">Reinstall Server</button>';
+    html += '<button class="dr-btn red" id="delPanelBtn2">Hapus Server + User</button>';
+    html += '</div>';
+  }
+
+  var drawerTitle = 'Kelola Panel — @' + (p.username||p.serverId)
+    + (isReseller ? ' <span style="font-size:.6rem;background:rgba(167,139,250,.15);color:var(--pur);padding:.1rem .4rem;border-radius:4px;border:1px solid rgba(167,139,250,.3)">Reseller</span>' : '');
+
+  openDrawer(drawerTitle, html);
   setTimeout(function() {
     var d2 = document.getElementById('delPanelBtn2');
-    if (d2) d2.onclick = function(){ deletePanel(p.serverId, p.username||''); };
-    var extBtn = document.getElementById('drExtBtn');
-    if (extBtn) extBtn.onclick = function(){ extendPanel(p.serverId); };
-    var rpBtn = document.getElementById('drRpBtn');
-    if (rpBtn) rpBtn.onclick = function(){ resetPanelPwd(p.serverId); };
+    if (d2) d2.onclick = function(){
+      if (isReseller) deleteRsServer(p._rsvId, p.username||'');
+      else deletePanel(p.serverId, p.username||'');
+    };
   }, 30);
 }
 
-async function extendPanel(sid) {
+// BUG FIX: unified extend — routing ke endpoint yang benar berdasarkan tipe panel
+async function extendPanelUnified(sid, rsvId, isReseller) {
   var days = parseInt((document.getElementById('drExtDays')||{}).value);
   if (!days || days < 1) { toast('Masukkan jumlah hari valid', 'err'); return; }
-  var j = await aFetch('POST', '/api/admin/panels/' + sid + '/extend', { days });
-  if (j.ok) { toast('Kontrak diperpanjang hingga ' + j.newExpiryFmt, 'ok'); closeDrawer(); loadPanels(); }
-  else toast(j.message, 'err');
+  var j;
+  if (isReseller && rsvId) {
+    j = await aFetch('POST', '/api/admin/reseller-servers/' + encodeURIComponent(rsvId) + '/extend', { days });
+  } else {
+    j = await aFetch('POST', '/api/admin/panels/' + sid + '/extend', { days });
+  }
+  if (j.ok) { toast('Kontrak diperpanjang hingga ' + (j.newExpiryFmt||''), 'ok'); closeDrawer(); loadPanels(); }
+  else toast(j.message || 'Gagal perpanjang.', 'err');
+}
+
+async function reducePanelUnified(sid, rsvId, isReseller) {
+  var days = parseInt((document.getElementById('drExtDays')||{}).value);
+  if (!days || days < 1) { toast('Masukkan jumlah hari yang ingin dikurangi', 'err'); return; }
+  var ok = await showConfirm({
+    title: 'Kurangi ' + days + ' Hari?',
+    message: 'Kontrak panel <b>' + esc(String(sid)) + '</b> akan dikurangi <b style="color:var(--red)">' + days + ' hari</b>. Tindakan ini tidak bisa dibatalkan.',
+    okLabel: 'Ya, Kurangi', danger: true,
+  });
+  if (!ok) return;
+  var j;
+  if (isReseller && rsvId) {
+    j = await aFetch('POST', '/api/admin/reseller-servers/' + encodeURIComponent(rsvId) + '/reduce', { days });
+  } else {
+    j = await aFetch('POST', '/api/admin/panels/' + sid + '/reduce', { days });
+  }
+  if (j.ok) { toast('Kontrak dikurangi. Baru berakhir: ' + (j.newExpiryFmt||''), 'ok'); closeDrawer(); loadPanels(); }
+  else toast(j.message || 'Gagal kurangi hari.', 'err');
 }
 
 async function resetPanelPwd(sid) {
@@ -2898,9 +2974,49 @@ function updateContentFields(container, pi, vi, ct, v) {
 
     // Add accounts textarea
     var addArea = document.createElement('textarea');
-    addArea.className = 'f-inp'; addArea.rows = 4; addArea.style.resize = 'vertical';
+    addArea.className = 'f-inp'; addArea.rows = 3; addArea.style.resize = 'vertical';
     addArea.style.fontFamily = 'monospace'; addArea.style.fontSize = '.68rem';
-    addArea.placeholder = 'Tambah akun baru (satu per baris):\nuser1|pass1\nuser2|pass2\nuser3|pass3';
+    addArea.placeholder = 'Bulk input (satu per baris):\nuser1|pass1\nuser2|pass2\nuser3|pass3';
+
+    // ── Input terstruktur: username + password terpisah
+    var singleWrap = document.createElement('div');
+    singleWrap.style.cssText = 'display:flex;gap:.35rem;align-items:flex-end;margin-bottom:.4rem';
+
+    var userInp = document.createElement('input');
+    userInp.className = 'f-inp'; userInp.type = 'text';
+    userInp.placeholder = 'Username / Email';
+    userInp.style.cssText = 'flex:1;font-size:.7rem';
+
+    var passInp = document.createElement('input');
+    passInp.className = 'f-inp'; passInp.type = 'text';
+    passInp.placeholder = 'Password';
+    passInp.style.cssText = 'flex:1;font-size:.7rem';
+
+    var addOneBtn = document.createElement('button');
+    addOneBtn.style.cssText = 'font-size:.65rem;font-weight:700;color:#040d09;background:var(--em);border:none;border-radius:6px;padding:.42rem .75rem;cursor:pointer;font-family:var(--font);flex-shrink:0;white-space:nowrap';
+    addOneBtn.textContent = '+ Tambah';
+    addOneBtn.onclick = function() {
+      var u = userInp.value.trim();
+      var p = passInp.value.trim();
+      if (!u || !p) { toast('Isi username dan password terlebih dahulu', 'warn'); return; }
+      var line = u + '|' + p;
+      addArea.value = addArea.value ? addArea.value.trim() + '\n' + line : line;
+      userInp.value = ''; passInp.value = '';
+      userInp.focus();
+      toast('Ditambahkan ke antrian — klik "Simpan Akun" untuk menyimpan', 'info');
+    };
+    // Enter di password langsung tambah
+    passInp.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); addOneBtn.click(); }
+    });
+
+    var sepLabel = document.createElement('div');
+    sepLabel.style.cssText = 'font-size:.58rem;color:var(--t3);margin:.3rem 0 .3rem;display:flex;align-items:center;gap:.5rem';
+    sepLabel.innerHTML = '<span style="flex:1;height:1px;background:var(--line)"></span><span>atau bulk paste</span><span style="flex:1;height:1px;background:var(--line)"></span>';
+
+    singleWrap.appendChild(userInp); singleWrap.appendChild(passInp); singleWrap.appendChild(addOneBtn);
+    acctBox.appendChild(singleWrap);
+    acctBox.appendChild(sepLabel);
     acctBox.appendChild(addArea);
 
     var btnRow = document.createElement('div');
@@ -4382,6 +4498,55 @@ function fmtBytes(b) {
   return (b/1024).toFixed(0) + ' KB';
 }
 
+// ── SYSTEM INFO (DB backend, Pterodactyl, CDN config)
+async function loadSystemInfo() {
+  var wrap = document.getElementById('sysInfoWrap');
+  if (!wrap) return;
+  try {
+    var j = await aFetch('GET', '/api/admin/system-info');
+    if (!j.ok) { wrap.innerHTML = '<span style="color:var(--red)">Error: ' + esc(j.message||'Gagal') + '</span>'; return; }
+    var db = j.db || {};
+    var dbColor = db.ready ? 'var(--em)' : 'var(--red)';
+    var dbIcon  = db.ready ? '✅' : '❌';
+    var dbDetail = '';
+    if (db.backend === 'github') {
+      dbDetail = db.owner + '/' + db.repo + ' @' + (db.branch||'main');
+    } else {
+      dbDetail = db.project ? db.project + '.supabase.co' : '—';
+    }
+    var cdnList = (j.cdn || []).map(function(c){ return c.owner + '/' + c.repos.join(','); }).join(' | ') || '—';
+    var pteroStatus = j.ptero && j.ptero.configured ? '✅ ' + esc(j.ptero.domain||'') : '⚠️ Belum dikonfigurasi';
+    var pakStatus   = j.pakasir && j.pakasir.configured ? '✅ Aktif' : '⚠️ Belum dikonfigurasi';
+
+    wrap.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.5rem">'
+      + '<div style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:.65rem .85rem">'
+        + '<div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:.35rem">Database Backend</div>'
+        + '<div style="font-size:.78rem;font-weight:700;color:' + dbColor + '">' + dbIcon + ' ' + (db.backend||'—').toUpperCase() + '</div>'
+        + '<div style="font-size:.63rem;color:var(--t3);margin-top:.2rem;word-break:break-all">' + esc(dbDetail) + '</div>'
+        + '<div style="font-size:.58rem;color:var(--t4);margin-top:.3rem">Set env: DATABASE=' + esc(db.backend||'supabase') + '</div>'
+      + '</div>'
+      + '<div style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:.65rem .85rem">'
+        + '<div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:.35rem">CDN (GitHub)</div>'
+        + '<div style="font-size:.7rem;color:var(--sky);word-break:break-all">' + esc(cdnList) + '</div>'
+        + '<div style="font-size:.58rem;color:var(--t4);margin-top:.3rem">Selalu pakai GitHub terlepas dari pilihan DB</div>'
+      + '</div>'
+      + '<div style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:.65rem .85rem">'
+        + '<div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:.35rem">Pterodactyl</div>'
+        + '<div style="font-size:.7rem">' + pteroStatus + '</div>'
+      + '</div>'
+      + '<div style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:.65rem .85rem">'
+        + '<div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:.35rem">Pakasir QRIS</div>'
+        + '<div style="font-size:.7rem">' + pakStatus + '</div>'
+      + '</div>'
+    + '</div>'
+    + '<div style="margin-top:.6rem;font-size:.6rem;background:var(--bg2);border:1px solid var(--line);border-radius:7px;padding:.5rem .75rem;color:var(--t4);font-family:monospace">'
+    + esc(j.env_hint||'')
+    + '</div>';
+  } catch(e) {
+    if (wrap) wrap.innerHTML = '<span style="color:var(--red)">Koneksi error: ' + esc(e.message) + '</span>';
+  }
+}
+
 async function loadMonitor() {
   try {
     var [mj, lj] = await Promise.all([
@@ -4906,7 +5071,7 @@ function handleAdminEvent(d) {
     if (activeTab === 'tabSewabot') setTimeout(loadSewabotOrders, 800);
   } else if (d.type === 'otp_completed') {
     // OTP order selesai — notifikasi real-time ke admin
-    var otpLbl = '@' + (d.username||'?') + ' · ' + esc(d.service||'') + (d.country ? ' (' + esc(d.country) + ')' : '') + ' | ' + idr(d.price||0);
+    var otpLbl = '@' + (d.username||'?') + ' · ' + esc(d.service||'') + (d.country ? ' (' + esc(d.country) + ')' : '') + ' | ' + idr(d.price||0) + (d.otp ? ' 🔑 ' + esc(d.otp) : '');
     showLiveNotif('otp', 'sky', ' OTP Diterima', otpLbl);
     if (activeTab === 'tabUsers') setTimeout(loadUsers, 800);
   }
@@ -5088,16 +5253,35 @@ async function testWebhook() {
 function closeAllRsDropdowns() {
   document.querySelectorAll('.rs-dropdown.open').forEach(function(d){ d.classList.remove('open'); });
 }
+// BUG FIX: posisikan dropdown pakai fixed + getBoundingClientRect agar tidak terpotong
+// oleh overflow:auto/hidden pada container tabel
 function toggleRsDropdown(btn) {
   var dd = btn.nextElementSibling;
   var wasOpen = dd.classList.contains('open');
   closeAllRsDropdowns();
-  if (!wasOpen) dd.classList.add('open');
+  if (!wasOpen) {
+    var rect = btn.getBoundingClientRect();
+    // Tentukan apakah dropdown muat di bawah atau harus muncul ke atas
+    var spaceBelow = window.innerHeight - rect.bottom;
+    dd.style.top    = (spaceBelow > 160 ? rect.bottom + 4 : rect.top - 4) + 'px';
+    dd.style.bottom = spaceBelow > 160 ? 'auto' : (window.innerHeight - rect.top + 4) + 'px';
+    // Posisi horizontal: coba align-right, jangan overflow viewport kiri
+    var rightPos = window.innerWidth - rect.right;
+    dd.style.right  = rightPos + 'px';
+    dd.style.left   = 'auto';
+    if (spaceBelow > 160) dd.style.bottom = 'auto';
+    else dd.style.top = 'auto';
+    dd.classList.add('open');
+  }
 }
 // Tutup dropdown saat klik di luar
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.rs-actions')) closeAllRsDropdowns();
 });
+// Tutup dropdown saat scroll (posisi fixed bisa bergeser)
+document.querySelector('.app-body') && document.querySelector('.app-body').addEventListener('scroll', function() {
+  closeAllRsDropdowns();
+}, { passive: true });
 // ══════════════════════════════════════════════════════════════
 var _resellerData = [];
 
@@ -5270,17 +5454,10 @@ async function doResetResellerPass(username) {
 }
 
 // ══════════════════════════════════════════════════════
-// RESELLER SERVER MANAGEMENT
+// RESELLER SERVER MANAGEMENT — sekarang dikelola lewat tabel Panel (tab Panel)
+// Fungsi loadRsServers dipertahankan agar tidak error jika masih dipanggil
 // ══════════════════════════════════════════════════════
-var _rsServersData = [];
-
-async function loadRsServers() {
-  document.getElementById('rsServersBody').innerHTML = '<tr><td colspan="7" class="tbl-empty"><span class="ld"><span></span><span></span><span></span></span> Memuat...</td></tr>';
-  var j = await aFetch('GET', '/api/admin/reseller-servers');
-  if (!j.ok) { document.getElementById('rsServersBody').innerHTML = '<tr><td colspan="7" class="tbl-empty" style="color:var(--red)">' + esc(j.message||'Gagal memuat') + '</td></tr>'; return; }
-  _rsServersData = j.data || [];
-  renderRsServersTable();
-}
+async function loadRsServers() { return loadPanels(); }
 
 function renderRsServersTable() {
   var q = (document.getElementById('rsSrvSearch').value || '').toLowerCase().trim();
@@ -5339,7 +5516,7 @@ async function doExtendRsServer(id) {
   var days = parseInt((document.getElementById('drRsExtDays')||{}).value);
   if (!days || days < 1 || days > 3650) { toast('Jumlah hari tidak valid.', 'warn'); return; }
   var j = await aFetch('POST', '/api/admin/reseller-servers/' + encodeURIComponent(id) + '/extend', { days });
-  if (j.ok) { toast('Berhasil diperpanjang s/d ' + (j.newExpiryFmt||''), 'ok'); closeDrawer(); loadRsServers(); }
+  if (j.ok) { toast('Berhasil diperpanjang s/d ' + (j.newExpiryFmt||''), 'ok'); closeDrawer(); loadPanels(); }
   else toast(j.message || 'Gagal.', 'err');
 }
 
@@ -5349,7 +5526,7 @@ async function toggleRsServer(id, action) {
   var ok = await showConfirm({ danger: action === 'suspend', title: label + ' Panel Reseller', message: label + ' panel <b>' + esc(s&&s.panelUsername||id) + '</b> milik reseller <b>' + esc(s&&s.resellerUsername||'?') + '</b>?', okLabel: label });
   if (!ok) return;
   var j = await aFetch('POST', '/api/admin/reseller-servers/' + encodeURIComponent(id) + '/' + action);
-  if (j.ok) { toast('Berhasil ' + label.toLowerCase() + '.', 'ok'); loadRsServers(); }
+  if (j.ok) { toast('Berhasil ' + label.toLowerCase() + '.', 'ok'); closeDrawer(); loadPanels(); }
   else toast(j.message || 'Gagal.', 'err');
 }
 
@@ -5357,7 +5534,7 @@ async function deleteRsServer(id, username) {
   var ok = await showConfirm({ danger: true, title: 'Hapus Panel Reseller', message: 'Hapus server panel <b>' + esc(username) + '</b> dari Pterodactyl? Tindakan ini <b>tidak bisa dibatalkan</b>.', okLabel: 'Hapus' });
   if (!ok) return;
   var j = await aFetch('DELETE', '/api/admin/reseller-servers/' + encodeURIComponent(id));
-  if (j.ok) { toast('Server reseller dihapus.', 'ok'); loadRsServers(); }
+  if (j.ok) { toast('Server reseller dihapus.', 'ok'); closeDrawer(); loadPanels(); }
   else toast(j.message || 'Gagal.', 'err');
 }
 

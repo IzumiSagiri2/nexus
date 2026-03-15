@@ -306,7 +306,7 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').cat
           }).catch(function(){});
         }
         if (d.type === 'maintenance' && d.on) {
-          document.body.innerHTML = '<div style="position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;color:#f0f0f0;font-size:.9rem;text-align:center;padding:2rem">' + (d.msg || 'Sedang dalam maintenance.') + '</div>';
+          document.body.innerHTML = '<div style="position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;color:#f0f0f0;font-size:.9rem;text-align:center;padding:2rem">' + esc(d.msg || 'Sedang dalam maintenance.') + '</div>';
         }
       } catch(ex){}
     };

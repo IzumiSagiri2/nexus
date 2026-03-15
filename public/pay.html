@@ -255,11 +255,35 @@ body::before{content:'';position:fixed;top:-150px;left:50%;transform:translateX(
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </button>
         </div>
-        <div class="amt-label">Total Pembayaran</div>
+        <!-- Download QR button yang lebih jelas -->
+        <button id="dlBtnWide" onclick="downloadQR()" style="display:none;margin:.4rem auto 0;padding:.3rem .9rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:7px;color:var(--t3);font-size:.62rem;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s;display:none;align-items:center;gap:.3rem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="11" height="11"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download QR
+        </button>
+        <div class="amt-label" style="margin-top:.75rem">Total Pembayaran</div>
         <div class="amt-row"><span class="amt-rp">Rp</span><span class="amt-num" id="amtNum">—</span></div>
         <div class="amt-warn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           Transfer nominal persis seperti tertera
+        </div>
+        <!-- Cara bayar QRIS (collapsible) -->
+        <div style="margin-top:.65rem;text-align:left">
+          <button onclick="toggleCaraBayar(this)" style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:var(--rs);padding:.42rem .7rem;font-family:var(--font);font-size:.62rem;font-weight:600;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .15s">
+            <span style="display:flex;align-items:center;gap:.3rem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Cara bayar QRIS
+            </span>
+            <span id="caraChevron" style="font-size:.55rem;transition:transform .18s">▾</span>
+          </button>
+          <div id="caraBayarBox" style="display:none;padding:.55rem .7rem;background:rgba(255,255,255,.03);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--rs) var(--rs);font-size:.65rem;color:var(--t3);line-height:1.8">
+            <ol style="margin:0;padding-left:1.1rem">
+              <li>Buka aplikasi m-banking / e-wallet (GoPay, OVO, Dana, dll)</li>
+              <li>Pilih menu <b style="color:var(--t2)">Scan QR</b> atau <b style="color:var(--t2)">Bayar QRIS</b></li>
+              <li>Arahkan kamera ke QR di atas</li>
+              <li>Nominal sudah terisi otomatis — cukup konfirmasi</li>
+              <li>Pembayaran terdeteksi otomatis dalam 5–30 detik</li>
+            </ol>
+          </div>
         </div>
       </div>
 
@@ -370,6 +394,14 @@ function copyTrx() { if(TID) navigator.clipboard.writeText(TID).then(function(){
 function cp(id) { navigator.clipboard.writeText(document.getElementById(id).textContent).then(function(){notify('Disalin','ok');}); }
 function downloadQR() { if(!qrImgSrc) return; var a=document.createElement('a'); a.href=qrImgSrc; a.download='QRIS-'+TID+'.png'; a.click(); notify('QR diunduh','ok'); }
 
+function toggleCaraBayar(btn) {
+  var box = document.getElementById('caraBayarBox');
+  var chev = document.getElementById('caraChevron');
+  var isOpen = box.style.display !== 'none';
+  box.style.display = isOpen ? 'none' : 'block';
+  chev.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
 // ── REAL-TIME: SSE + polling berjalan BERSAMAAN
 // SSE membaca status DB secara real-time, polling /api/check mengecek Pakasir dan memperbarui DB.
 // Keduanya harus berjalan bersamaan — SSE saja tidak cukup karena tidak memicu pengecekan ke Pakasir.
@@ -471,6 +503,7 @@ async function init() {
       document.getElementById('qrLoader').style.display='none';
       img.style.display='block'; qrImgSrc=src;
       document.getElementById('dlBtn').style.display='flex';
+      var wb=document.getElementById('dlBtnWide'); if(wb) wb.style.display='flex';
     };
     img.onerror = qrErr;
     img.src = src;
@@ -658,6 +691,8 @@ function renderContent(res) {
   var text = res.contentText || '';
   var filename = res.filename || res.title || 'produk';
 
+  var CP_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+
   // Icon + label
   var icons = {
     image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
@@ -667,7 +702,7 @@ function renderContent(res) {
     file:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
     text:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="12" x2="3" y2="12"/><line x1="21" y1="18" x2="9" y2="18"/></svg>',
   };
-  var labels = { image:'Gambar Produk', video:'Video Produk', audio:'Audio / MP3', link:'Link Produk', file:'File Download', text:'Konten Produk' };
+  var labels = { image:'Gambar Produk', video:'Video Produk', audio:'Audio / MP3', link:'Link Produk', file:'File Download', text:'Produk Anda' };
   head.innerHTML = (icons[ct]||icons.file) + ' ' + esc(labels[ct]||'Produk Anda');
 
   var html = '';
@@ -683,13 +718,42 @@ function renderContent(res) {
   } else if (ct === 'link' && url) {
     html += '<a href="' + esc(url) + '" target="_blank" rel="noopener" class="content-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span class="content-link-url">' + esc(url) + '</span></a>';
   } else if (ct === 'text' && text) {
-    html += '<div class="content-text">' + esc(text) + '</div>';
+    // ── SMART ACCOUNT PARSER: deteksi format akun otomatis ──
+    var parsed = _parseAccountText(text);
+    if (parsed && parsed.type === 'fields') {
+      // Format akun rapi dengan copy per field
+      html += '<div style="background:var(--bg3);border-radius:10px;overflow:hidden;margin-bottom:.75rem">';
+      parsed.fields.forEach(function(f) {
+        var safeVal = f.value.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+        html += '<div class="data-row" style="border-bottom:1px solid var(--line)">'
+          + '<span class="d-k">' + esc(f.label) + '</span>'
+          + '<div class="d-v-wrap"><span class="d-v" style="font-family:monospace;font-size:.78rem;user-select:all">' + esc(f.value) + '</span>'
+          + '<button class="cp-btn" onclick="navigator.clipboard.writeText(\'' + safeVal + '\').then(function(){notify(\'Disalin\',\'ok\');})" title="Salin">' + CP_SVG + '</button>'
+          + '</div></div>';
+      });
+      html += '</div>';
+    } else if (parsed && parsed.type === 'multiline') {
+      // Multi-baris: tampilkan per baris
+      html += '<div style="background:var(--bg3);border-radius:10px;overflow:hidden;margin-bottom:.75rem">';
+      parsed.lines.forEach(function(line, i) {
+        var safeVal = line.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+        html += '<div class="data-row" style="border-bottom:1px solid var(--line)">'
+          + '<span class="d-k" style="min-width:60px">Baris ' + (i+1) + '</span>'
+          + '<div class="d-v-wrap"><span class="d-v" style="font-family:monospace;font-size:.78rem;user-select:all">' + esc(line) + '</span>'
+          + '<button class="cp-btn" onclick="navigator.clipboard.writeText(\'' + safeVal + '\').then(function(){notify(\'Disalin\',\'ok\');})" title="Salin">' + CP_SVG + '</button>'
+          + '</div></div>';
+      });
+      html += '</div>';
+    } else {
+      // Teks biasa
+      html += '<div class="content-text">' + esc(text) + '</div>';
+    }
   } else if (url) {
     html += '<div style="font-size:.72rem;color:var(--t2);margin-bottom:.75rem">File siap untuk diunduh.</div>';
   }
   preview.innerHTML = html;
 
-  // ── Instruksi / Langkah-langkah
+  // ── Instruksi / Langkah-langkah (FIX: sekarang dikirim dari server)
   if (res.instructions && res.instructions.trim()) {
     var instLines = res.instructions.trim().split('\n');
     var instHtml = '<div style="margin-bottom:1rem">'
@@ -708,7 +772,6 @@ function renderContent(res) {
   var links = Array.isArray(res.contentLinks) && res.contentLinks.length > 0 ? res.contentLinks : [];
 
   if (links.length > 0) {
-    // Render one button per link
     var SVG_DL   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
     var SVG_LINK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
     var isLinkType = (ct === 'link');
@@ -726,10 +789,60 @@ function renderContent(res) {
     bhtml += '<a href="' + esc(url) + '" target="_blank" rel="noopener" class="btn btn-em"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Buka Link</a>';
   }
 
+  // Copy all + copy text button
   if (ct === 'text' && text) {
-    bhtml += '<button onclick="navigator.clipboard.writeText(document.querySelector(\'.content-text\').textContent).then(function(){notify(\'Disalin!\',\'ok\');})" class="btn btn-sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Salin Konten</button>';
+    var safeAll = text.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+    bhtml += '<button onclick="navigator.clipboard.writeText(\'' + safeAll + '\').then(function(){notify(\'Semua data disalin!\',\'ok\');})" class="btn btn-sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Salin Semua</button>';
   }
   btns.innerHTML = bhtml;
+}
+
+// ── SMART ACCOUNT TEXT PARSER
+// Deteksi format: "user|pass", "user:pass", multi-baris, dsb.
+function _parseAccountText(text) {
+  if (!text || !text.trim()) return null;
+  var t = text.trim();
+  // Format single-line dengan separator | atau :
+  if (!t.includes('\n')) {
+    var sep = t.includes('|') ? '|' : (t.includes(':') && !t.startsWith('http') ? ':' : null);
+    if (sep) {
+      var parts = t.split(sep);
+      if (parts.length === 2 && parts[0].trim() && parts[1].trim()) {
+        return { type:'fields', fields:[
+          { label: 'Username', value: parts[0].trim() },
+          { label: 'Password', value: parts[1].trim() },
+        ]};
+      }
+      if (parts.length >= 2) {
+        var labelMap = ['Username','Password','Server','Database','Host','Port','API Key'];
+        return { type:'fields', fields: parts.map(function(p,i){ return { label: labelMap[i]||('Field '+(i+1)), value: p.trim() }; }) };
+      }
+    }
+    return null; // single line tanpa separator → teks biasa
+  }
+  // Multi-baris: cek apakah tiap baris berisi "label: value" atau "label|value"
+  var lines = t.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+  if (lines.length >= 2) {
+    // Cek format "Label: Value"
+    var hasLabelColon = lines.every(function(l){ return /^[^:]+:\s*.+/.test(l); });
+    if (hasLabelColon) {
+      return { type:'fields', fields: lines.map(function(l){
+        var idx = l.indexOf(':');
+        return { label: l.slice(0,idx).trim(), value: l.slice(idx+1).trim() };
+      })};
+    }
+    // Cek format "Label|Value" per baris
+    var hasLabelPipe = lines.every(function(l){ return l.includes('|'); });
+    if (hasLabelPipe) {
+      return { type:'fields', fields: lines.map(function(l){
+        var idx = l.indexOf('|');
+        return { label: l.slice(0,idx).trim(), value: l.slice(idx+1).trim() };
+      })};
+    }
+    // Baris biasa tanpa label
+    return { type:'multiline', lines: lines };
+  }
+  return null;
 }
 
 // ── HANDLE RESULT
@@ -866,6 +979,39 @@ function printReceipt() {
 
 init();
 
+// ── AUTO-CANCEL: Batalkan order PENDING saat user tutup/refresh halaman
+// Hanya berlaku selama status masih PENDING (bukan gratis, bukan selesai)
+window.addEventListener('beforeunload', function() {
+  if (done || !TID) return;
+  if (trxData && trxData.freeProduct) return;
+  // sendBeacon lebih reliable daripada fetch saat halaman ditutup
+  navigator.sendBeacon('/api/cancel', new URLSearchParams({ id: TID }));
+});
+
+// ── Tombol "Kembali ke Toko": konfirmasi dulu jika masih PENDING
+(function() {
+  var backBtn = document.querySelector('.back-btn');
+  if (!backBtn) return;
+  backBtn.addEventListener('click', function(e) {
+    if (done || !TID) return; // sudah selesai/gagal → biarkan keluar bebas
+    if (trxData && trxData.freeProduct) return; // produk gratis → keluar bebas
+    e.preventDefault();
+    showConfirm({
+      title: 'Tinggalkan Halaman?',
+      message: 'Kamu belum menyelesaikan pembayaran.<br><br>Jika keluar, pesanan ini akan <b>dibatalkan otomatis</b> agar tidak menumpuk.',
+      okLabel: 'Keluar & Batalkan',
+      cancelLabel: 'Tetap Bayar'
+    }).then(function(confirmed) {
+      if (!confirmed) return;
+      done = true; // cegah beforeunload double-cancel
+      if (sseConn) { sseConn.close(); sseConn = null; }
+      clearInterval(cInt); clearInterval(tInt);
+      fetch('/api/cancel', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:'id='+TID }).catch(function(){});
+      window.location.href = '/';
+    });
+  });
+})();
+
 // ── REAL-TIME: Store SSE — settings & maintenance updates
 (function connectStoreSSE() {
   try {
@@ -884,7 +1030,7 @@ init();
           }).catch(function(){});
         }
         if (d.type === 'maintenance' && d.on) {
-          document.body.innerHTML = '<div style="position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;color:#f0f0f0;font-size:.9rem;text-align:center;padding:2rem">' + (d.msg || 'Sedang dalam maintenance.') + '</div>';
+          document.body.innerHTML = '<div style="position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;color:#f0f0f0;font-size:.9rem;text-align:center;padding:2rem">' + esc(d.msg || 'Sedang dalam maintenance.') + '</div>';
         }
       } catch(ex){}
     };

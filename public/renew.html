@@ -183,6 +183,7 @@ var panelData  = null;
 var selDays    = 0;
 var selPrice   = 0;
 var idr = function(n){ return 'Rp' + Number(n).toLocaleString('id-ID'); };
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },2200); }
 function showErr(elId, msg){ var e=document.getElementById(elId); e.textContent=msg; e.classList.add('show'); }
@@ -414,7 +415,7 @@ fetch('/api/products').then(function(r){return r.json();}).then(function(j){
           }).catch(function(){});
         }
         if (d.type === 'maintenance' && d.on) {
-          document.body.innerHTML = '<div style="position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;color:#f0f0f0;font-size:.9rem;text-align:center;padding:2rem">' + (d.msg || 'Sedang dalam maintenance.') + '</div>';
+          document.body.innerHTML = '<div style="position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;color:#f0f0f0;font-size:.9rem;text-align:center;padding:2rem">' + esc(d.msg || 'Sedang dalam maintenance.') + '</div>';
         }
       } catch(ex){}
     };

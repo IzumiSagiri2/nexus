@@ -220,6 +220,22 @@ body::before{content:'';position:fixed;top:-120px;left:50%;transform:translateX(
     <div id="depStep2" style="display:none">
       <div class="dep-info" id="depInfo"></div>
       <div class="qr-box" id="depQr"></div>
+      <!-- Panduan cara bayar QRIS (collapsible) -->
+      <div style="margin:.5rem 0">
+        <button onclick="var b=document.getElementById('depGuide'),c=document.getElementById('depGuideChev');var o=b.style.display!=='none';b.style.display=o?'none':'block';c.style.transform=o?'':'rotate(180deg)'" style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:7px;padding:.38rem .65rem;font-family:var(--font);font-size:.6rem;font-weight:600;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+          <span>Cara bayar QRIS</span>
+          <span id="depGuideChev" style="font-size:.52rem;transition:transform .18s">▾</span>
+        </button>
+        <div id="depGuide" style="display:none;padding:.5rem .65rem;background:rgba(255,255,255,.03);border:1px solid var(--line);border-top:none;border-radius:0 0 7px 7px;font-size:.62rem;color:var(--t3);line-height:1.85">
+          <ol style="margin:0;padding-left:1.1rem">
+            <li>Buka aplikasi m-banking / e-wallet</li>
+            <li>Pilih menu <b style="color:var(--t2)">Scan QR</b> atau <b style="color:var(--t2)">Bayar QRIS</b></li>
+            <li>Scan QR di atas atau screenshot lalu upload</li>
+            <li>Nominal sudah terisi otomatis — konfirmasi pembayaran</li>
+            <li>Status akan terdeteksi otomatis dalam 5–30 detik</li>
+          </ol>
+        </div>
+      </div>
       <div class="dep-timer" id="depTimer"></div>
       <div class="info-box" id="depSuccessBox"></div>
       <div class="dep-actions" id="depActions">
@@ -250,6 +266,7 @@ body::before{content:'';position:fixed;top:-120px;left:50%;transform:translateX(
       <button class="sec-tab on" id="stBuy"      onclick="showSec('buy')">Beli Nomor</button>
       <button class="sec-tab"    id="stOrders"   onclick="showSec('orders')">Riwayat Order</button>
       <button class="sec-tab"    id="stDeposits" onclick="showSec('deposits')">Riwayat Deposit</button>
+      <button class="sec-tab"    id="stInfo"     onclick="showSec('info')">Info &amp; Panduan</button>
       <button class="sec-tab"    id="stAccount"  onclick="showSec('account')">Akun</button>
     </div>
 
@@ -311,6 +328,69 @@ body::before{content:'';position:fixed;top:-120px;left:50%;transform:translateX(
       <div class="page-title">Riwayat Deposit</div>
       <div class="page-sub">30 deposit terakhir</div>
       <div id="depositsWrap"><div style="text-align:center;color:var(--t3);font-size:.7rem;padding:2rem"><span class="spin">|</span> Memuat...</div></div>
+    </div>
+
+    <div class="sec" id="secInfo">
+      <div class="page-title">Info &amp; Panduan</div>
+      <div class="page-sub">Informasi toko dan cara pembelian</div>
+
+      <!-- Link Cepat -->
+      <div style="background:var(--bg1);border:1px solid var(--line2);border-radius:var(--rad);padding:1.1rem;margin-bottom:.85rem">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.75rem">🔗 Link Cepat</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          <a href="/otp" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:.65rem .9rem;text-decoration:none;color:var(--t1);transition:border-color .15s" onmouseover="this.style.borderColor='rgba(52,211,153,.35)'" onmouseout="this.style.borderColor='var(--line)'">
+            <span style="font-size:.75rem;font-weight:600">📱 Order OTP</span>
+            <span style="font-size:.62rem;color:var(--t3)">dongtube.my.id/otp</span>
+          </a>
+          <a href="/" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:.65rem .9rem;text-decoration:none;color:var(--t1);transition:border-color .15s" onmouseover="this.style.borderColor='rgba(52,211,153,.35)'" onmouseout="this.style.borderColor='var(--line)'">
+            <span style="font-size:.75rem;font-weight:600">🖥️ Order Panel</span>
+            <span style="font-size:.62rem;color:var(--t3)">dongtube.my.id</span>
+          </a>
+          <a href="https://wa.me/6283143961588" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:.65rem .9rem;text-decoration:none;color:var(--t1);transition:border-color .15s" onmouseover="this.style.borderColor='rgba(52,211,153,.35)'" onmouseout="this.style.borderColor='var(--line)'">
+            <span style="font-size:.75rem;font-weight:600">📝 Order Script Web</span>
+            <span style="font-size:.62rem;color:var(--t3)">WhatsApp CS</span>
+          </a>
+          <a href="https://whatsapp.com/channel/0029Vb91qeW17Emm4TVqu53K" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.2);border-radius:9px;padding:.65rem .9rem;text-decoration:none;color:var(--t1);transition:border-color .15s" onmouseover="this.style.borderColor='rgba(52,211,153,.45)'" onmouseout="this.style.borderColor='rgba(52,211,153,.2)'">
+            <span style="font-size:.75rem;font-weight:600;color:var(--em)">🔔 Channel OTP / Notifikasi</span>
+            <span style="font-size:.62rem;color:var(--em)">Join Channel</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div style="background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.2);border-radius:var(--rad);padding:1rem;margin-bottom:.85rem">
+        <div style="font-size:.62rem;font-weight:700;color:var(--yel);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.07em">⚠️ Penting — Harap Dibaca</div>
+        <div style="font-size:.72rem;color:rgba(240,240,240,.75);line-height:1.75">
+          Mohon di baca — kami hanya menyediakan website order Nokos murah, <b style="color:var(--t1)">bukan kami yang menyediakan nokos tersebut</b> dan saldo kalian juga <b style="color:var(--t1)">tidak di pegang oleh kami</b>.<br><br>
+          Tetapi jika ada kendala seperti saldo tidak masuk atau ada kendala dengan web silahkan hubungi CS.
+        </div>
+        <a href="https://wa.me/6283143961588" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;margin-top:.75rem;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);border-radius:7px;padding:.4rem .85rem;font-size:.7rem;font-weight:700;color:var(--yel);text-decoration:none">
+          Hubungi CS
+        </a>
+      </div>
+
+      <!-- Tips & Panduan -->
+      <div style="background:var(--bg1);border:1px solid var(--line2);border-radius:var(--rad);padding:1.1rem;margin-bottom:.85rem">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.75rem">📋 Tips Pembelian</div>
+        <div style="display:flex;flex-direction:column;gap:.6rem" id="tipsWrap">
+          <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.6rem .75rem;background:var(--bg2);border-radius:9px">
+            <span style="font-size:1rem;flex-shrink:0;margin-top:.05rem">1️⃣</span>
+            <span style="font-size:.72rem;color:rgba(240,240,240,.8);line-height:1.6">Jika membeli nokos harap <b style="color:var(--t1)">pilih stok paling banyak</b> terlebih dahulu karena stok sedikit sering gagal order.</span>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.6rem .75rem;background:var(--bg2);border-radius:9px">
+            <span style="font-size:1rem;flex-shrink:0;margin-top:.05rem">2️⃣</span>
+            <span style="font-size:.72rem;color:rgba(240,240,240,.8);line-height:1.6">Jika kode OTP <b style="color:var(--t1)">tidak muncul dalam 7 menit</b> harap cancel order dan lakukan pembelian ulang.</span>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.6rem .75rem;background:var(--bg2);border-radius:9px">
+            <span style="font-size:1rem;flex-shrink:0;margin-top:.05rem">3️⃣</span>
+            <span style="font-size:.72rem;color:rgba(240,240,240,.8);line-height:1.6">Jika order nokos harap cek terlebih dahulu — apalagi <b style="color:var(--t1)">nokos WhatsApp</b>, mohon cek apakah nomor digunakan atau tidak (lihat foto profil).</span>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.6rem .75rem;background:rgba(248,113,113,.05);border:1px solid rgba(248,113,113,.12);border-radius:9px">
+            <span style="font-size:1rem;flex-shrink:0;margin-top:.05rem">4️⃣</span>
+            <span style="font-size:.72rem;color:rgba(240,240,240,.8);line-height:1.6">Membeli nokos di website <b style="color:var(--red)">sepenuhnya menjadi tanggung jawab diri sendiri</b>. Jika ingin owner tanggung jawab, beli ke owner langsung.</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="sec" id="secAccount">
@@ -617,6 +697,8 @@ function showSec(name) {
   if (name === 'orders')   loadOrders();
   if (name === 'deposits') loadDeposits();
   if (name === 'account')  loadMe();
+  // Info section: load link dinamis dari settings
+  if (name === 'info') loadInfoLinks();
 }
 
 var _pinnedCodes = [];
@@ -979,6 +1061,8 @@ async function buyNumber(country, pricelist, srcBtn, modalBtn) {
     if (srcBtn) { srcBtn.disabled = false; srcBtn.textContent = 'Beli Lagi'; srcBtn.style.background = 'rgba(var(--em-rgb),.18)'; }
     // Start polling this order (supports multiple concurrent)
     startOrderPoller(j.orderId);
+    // BUG FIX: Arahkan otomatis ke tab Riwayat Order agar user tahu nomornya ada di sana
+    setTimeout(function() { showSec('orders'); }, 600);
     // Refresh orders list if it's currently visible
     var ordSec = document.getElementById('secOrders');
     if (ordSec && ordSec.classList.contains('on')) loadOrders();
@@ -1002,17 +1086,57 @@ async function loadDeposits() {
     deps.forEach(function(d) {
       var sCls = { pending:'s-waiting', success:'s-completed', cancel:'s-canceled' }[d.status] || 's-waiting';
       var sLbl = { pending:'Menunggu', success:'Berhasil', cancel:'Dibatalkan' }[d.status] || d.status;
+      // Cek apakah deposit pending masih bisa di-resume (belum expired, ada QR)
+      var canResume = (d.status === 'pending' && d.expiredAt && Date.now() < d.expiredAt && d.qrImage);
       var div = document.createElement('div');
-      div.style.cssText = 'background:var(--bg1);border:1px solid var(--line);border-radius:var(--rad);padding:.9rem 1rem;margin-bottom:.5rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem';
+      div.style.cssText = 'background:var(--bg1);border:1px solid var(--line);border-radius:var(--rad);padding:.9rem 1rem;margin-bottom:.5rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem';
       div.innerHTML = '<div style="flex:1;min-width:0">'
-        + '<div style="font-size:.72rem;font-weight:700;color:var(--t1);margin-bottom:.15rem">' + idr(d.amount) + ' <span style="font-size:.6rem;font-weight:400;color:var(--t3)">/ ' + idr(d.totalBayarDeposit || d.amount) + ' dibayar</span></div>'
-        + '<div style="font-size:.6rem;color:var(--t3)">' + fmtDate(d.createdAt) + ' &nbsp;·&nbsp; <span class="ord-status ' + sCls + '">' + sLbl + '</span></div>'
-        + '</div>';
+        + '<div style="font-size:.72rem;font-weight:700;color:var(--t1);margin-bottom:.15rem">' + idr(d.amount)
+        + (d.totalBayarDeposit && d.totalBayarDeposit !== d.amount ? ' <span style="font-size:.6rem;font-weight:400;color:var(--t3)">/ ' + idr(d.totalBayarDeposit) + ' dibayar</span>' : '')
+        + '</div>'
+        + '<div style="font-size:.6rem;color:var(--t3)">' + fmtDate(d.createdAt) + ' &nbsp;·&nbsp; <span class="ord-status ' + sCls + '">' + sLbl + '</span>'
+        + (canResume ? ' &nbsp;·&nbsp; <span style="color:var(--yel)">QR masih aktif</span>' : '')
+        + '</div>'
+        + '</div>'
+        + (canResume ? '<button class="btn-sm btn-sm-em" style="white-space:nowrap;flex-shrink:0">Lanjut Bayar</button>' : '');
+      // Bind resume handler
+      if (canResume) {
+        div.querySelector('.btn-sm-em').onclick = function() {
+          resumeDeposit(d);
+        };
+      }
       wrap.appendChild(div);
     });
   } catch(e) {
     wrap.innerHTML = '<div style="text-align:center;color:var(--red);font-size:.7rem;padding:2rem">Gagal memuat riwayat deposit.</div>';
   }
+}
+
+// ── Resume deposit yang masih pending — tampilkan kembali QR-nya
+function resumeDeposit(d) {
+  depId = d.id;
+  // Buka modal langsung ke step2
+  document.getElementById('depModal').classList.remove('hide');
+  document.getElementById('depStep1').style.display = 'none';
+  document.getElementById('depStep2').style.display = '';
+  document.getElementById('depSuccessBox').classList.remove('show');
+  var actEl = document.getElementById('depActions'); if (actEl) actEl.style.display = 'flex';
+  hideErr('depErr');
+
+  var feeNote = (d.adminFeeDeposit && d.adminFeeDeposit > 0)
+    ? ' (termasuk biaya admin <b>' + idr(d.adminFeeDeposit) + '</b>)'
+    : '';
+  var totalShow = d.totalBayarDeposit || d.amount;
+  document.getElementById('depInfo').innerHTML = 'Bayar <b>' + idr(totalShow) + '</b>' + feeNote + ' via QRIS.<br><span style="font-size:.6rem;color:var(--t3)">Saldo yang masuk: ' + idr(d.amount) + '</span>';
+
+  var qrHtml = d.qrImage
+    ? '<img src="' + esc(d.qrImage) + '" alt="QRIS" style="width:200px;height:200px;border-radius:10px;border:3px solid var(--em);display:block;margin:0 auto">'
+    : '<div style="color:var(--red);font-size:.7rem;text-align:center">QR tidak tersedia.</div>';
+  document.getElementById('depQr').innerHTML = qrHtml;
+
+  startDepCountdown(d.expiredAt, d.id);
+  if (depPollTimer) clearInterval(depPollTimer);
+  depPollTimer = setInterval(pollDeposit, 4000);
 }
 
 async function loadOrders() {
@@ -1030,14 +1154,18 @@ async function loadOrders() {
     wrap.innerHTML = '';
     orders.forEach(function(o) {
       var sCls = {waiting:'s-waiting',received:'s-waiting',completed:'s-completed',canceled:'s-canceled',expired:'s-expired'}[o.status]||'s-waiting';
-      var sLbl = {waiting:'Menunggu',received:'Menunggu',completed:'Selesai',canceled:'Dibatalkan',expired:'Expired'}[o.status]||o.status;
+      var sLbl = {waiting:'Menunggu OTP',received:'OTP Masuk',completed:'Selesai',canceled:'Dibatalkan',expired:'Kadaluarsa'}[o.status]||o.status;
       var canCancel = (o.status==='waiting'||o.status==='received');
       var div = document.createElement('div'); div.className = 'ord-card';
       var otpHtml = '';
-      if (o.otp && o.otp !== '-') { otpHtml = '<div class="ord-otp" style="cursor:pointer" title="Klik untuk salin" onclick="navigator.clipboard.writeText(\'' + esc(o.otp) + '\');toast(\'OTP disalin!\',\'ok\')">' + esc(o.otp) + '</div>'; }
+      if (o.otp && o.otp !== '-') { otpHtml = '<div class="ord-otp" style="cursor:pointer" title="Klik untuk salin" onclick="navigator.clipboard.writeText(\'' + esc(o.otp) + '\');toast(\'OTP disalin! \u2714\',\'ok\')">' + esc(o.otp) + ' <span style="font-size:.55rem;color:var(--t3);font-weight:400;letter-spacing:0">(klik salin)</span></div>'; }
       else if (o.status==='waiting'||o.status==='received') { otpHtml = '<div style="font-size:.7rem;color:var(--yel);display:flex;align-items:center;gap:.4rem;margin:.3rem 0"><span class="spin">|</span> Menunggu kode OTP...</div>'; }
       else { otpHtml = '<div class="ord-otp" style="color:var(--t3)">—</div>'; }
-      div.innerHTML = '<div class="ord-head"><div><div class="ord-phone">' + esc(o.phoneNumber||'—') + '</div><div class="ord-svc">' + esc(o.service||'') + ' · ' + esc(o.country||'') + ' · ' + idr(o.price) + '</div></div><span class="ord-status ' + sCls + '">' + esc(sLbl) + '</span></div><div class="ord-body">' + otpHtml + '<div class="ord-meta">' + fmtDate(o.createdAt) + (o.refunded ? ' · <span style="color:var(--em)">Refunded</span>' : '') + '</div></div>';
+      // Sensor tengah nomor telepon: tampilkan prefix + *** + suffix
+      // Tampilkan nomor PENUH ke pembeli — yang di-mask hanya di notifikasi admin/channel WA
+      var rawPhone  = o.phoneNumber || '—';
+      var dispPhone = rawPhone; // no masking — ini milik pembeli sendiri
+      div.innerHTML = '<div class="ord-head"><div><div class="ord-phone">' + esc(dispPhone) + '</div><div class="ord-svc">' + esc(o.service||'') + (o.country ? ' &middot; ' + esc(o.country) : '') + ' &middot; ' + idr(o.price) + '</div><div style="font-size:.58rem;color:var(--t3);margin-top:.1rem">User: @' + esc(o.username||'') + ' &nbsp;·&nbsp; ID: ' + esc(o.id||'') + '</div></div><span class="ord-status ' + sCls + '">' + esc(sLbl) + '</span></div><div class="ord-body">' + otpHtml + '<div class="ord-meta">' + fmtDate(o.createdAt) + (o.refunded ? ' · <span style="color:var(--em)">Refunded ✓</span>' : '') + '</div></div>';
       if (canCancel) {
         var acts = document.createElement('div'); acts.className = 'ord-acts';
         var LOCK_MS = 3 * 60 * 1000;
@@ -1330,6 +1458,17 @@ function applyGlobalBg(s) {
   document.body.insertBefore(el, document.body.firstChild);
 }
 
+// ── INFO LINKS: update link CS dari settings dinamis
+function loadInfoLinks() {
+  fetch('/api/store-info').then(function(r){ return r.json(); }).then(function(j) {
+    if (!j.ok) return;
+    // Update CS link jika ada
+    if (j.cs) {
+      document.querySelectorAll('[data-wa-link]').forEach(function(el){ el.href = j.cs; });
+    }
+  }).catch(function(){});
+}
+
 // Load global settings on OTP page
 fetch('/api/products').then(function(r){return r.json();}).then(function(j){
   if(j.settings) applyGlobalSettings(j.settings);
@@ -1360,7 +1499,7 @@ fetch('/api/products').then(function(r){return r.json();}).then(function(j){
           }).catch(function(){});
         }
         if (d.type === 'maintenance' && d.on) {
-          document.body.innerHTML = '<div style="position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;color:#f0f0f0;font-size:.9rem;text-align:center;padding:2rem">' + (d.msg||'Sedang dalam maintenance.') + '</div>';
+          document.body.innerHTML = '<div style="position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;color:#f0f0f0;font-size:.9rem;text-align:center;padding:2rem">' + esc(d.msg||'Sedang dalam maintenance.') + '</div>';
         }
         // Real-time ban detection — server pushes this when admin bans a user
         if (d.type === 'user_banned' && d.username && d.username === USERNAME && TOKEN) {
