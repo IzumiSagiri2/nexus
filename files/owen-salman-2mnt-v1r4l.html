@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videy · Viral 2 menit</title>
+    <style>
+        /* ----- RESET & BASE ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f2f5;  /* abu-abu terang khas Videy */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        /* card utama putih bersih — seperti Videy */
+        .videy-card {
+            max-width: 460px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+        }
+
+        .page {
+            display: block;
+        }
+
+        .hidden-page {
+            display: none !important;
+        }
+
+        /* ----- HALAMAN 1 (LANDING) ----- */
+        .landing-content {
+            padding: 32px 24px 40px;
+        }
+
+        /* teks bergerak versi Videy — lebih subtle */
+        .marquee-wrap {
+            background: #f7f9fc;
+            border-radius: 60px;
+            padding: 16px 0;
+            margin-bottom: 24px;
+            border: 1px solid #eef2f6;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .marquee-text {
+            white-space: nowrap;
+            display: inline-block;
+            animation: slideVidey 10s linear infinite;
+            font-size: 30px;
+            font-weight: 700;
+            background: linear-gradient(145deg, #1b1f2b, #2c3e50);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            padding-left: 20px;
+            opacity: 0.9;
+        }
+
+        @keyframes slideVidey {
+            0% { transform: translateX(0); }
+            35% { transform: translateX(-25%); }
+            65% { transform: translateX(-25%); }
+            100% { transform: translateX(0); }
+        }
+
+        /* badge viral minimalis */
+        .trend-badge {
+            display: flex;
+            justify-content: center;
+            margin: 16px 0 28px;
+        }
+
+        .trend-badge span {
+            background: #f0f3f8;
+            color: #1f2a3f;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            padding: 8px 22px;
+            border-radius: 40px;
+            border: 1px solid #d9e0e9;
+            box-shadow: inset 0 1px 2px white, 0 2px 3px rgba(0,0,0,0.02);
+        }
+
+        .trend-badge i {
+            font-style: normal;
+            color: #e67e22;
+            margin-left: 5px;
+        }
+
+        /* tombol lanjut versi Videy — solid, sedikit bayangan */
+        .btn-next {
+            width: 100%;
+            background: #1f2937;
+            border: none;
+            border-radius: 60px;
+            padding: 20px 20px;
+            color: white;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 10px 0 #0f141c, 0 6px 18px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.06s linear;
+            border: 1px solid #404f62;
+            margin: 16px 0 20px;
+        }
+
+        .btn-next:active {
+            transform: translateY(6px);
+            box-shadow: 0 4px 0 #0f141c, 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        /* info penonton */
+        .view-info {
+            text-align: center;
+            color: #7c879c;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .view-info::before {
+            content: "👁️";
+            font-size: 18px;
+            opacity: 0.7;
+        }
+
+        /* ----- HALAMAN 2 (VIDEO PLAYER) ----- */
+        .player-container {
+            background: #ffffff;
+        }
+
+        /* area video — seperti tampilan videy native */
+        .video-area {
+            background: #000000;
+            line-height: 0;
+            position: relative;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+            pointer-events: none;  /* mencegah klik di video */
+        }
+
+        /* overlay transparan penuh biar ga bisa sentuh video */
+        .blocker-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 20;
+            cursor: default;
+        }
+
+        /* kontrol palsu — mirip videy */
+        .videy-controls {
+            background: #ffffff;
+            padding: 18px 18px 20px;
+            border-top: 1px solid #edf0f5;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .progress-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-time {
+            color: #1f2a3f;
+            font-size: 15px;
+            font-weight: 540;
+            min-width: 65px;
+        }
+
+        .progress-bar-fake {
+            flex: 1;
+            height: 6px;
+            background: #e2e7f0;
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 23%; /* biar keliatan udah diputar 23 detik */
+            height: 6px;
+            background: #1f2937;
+            border-radius: 6px;
+        }
+
+        .control-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .left-ctrl {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .play-pause-fake {
+            background: #1f2937;
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 0 #0f151f;
+            transition: 0.05s linear;
+        }
+
+        .volume-fake {
+            color: #3e4c64;
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .right-ctrl {
+            color: #3e4c64;
+            font-size: 22px;
+            display: flex;
+            gap: 18px;
+        }
+
+        .fake-icon {
+            opacity: 0.7;
+        }
+
+        /* keterangan kecil — biar makin real */
+        .hint-note {
+            background: #f8fafd;
+            color: #66758f;
+            font-size: 13px;
+            padding: 14px 20px;
+            text-align: center;
+            border-top: 1px solid #eaeef4;
+            letter-spacing: 0.2px;
+        }
+
+        .hint-note i {
+            font-style: normal;
+            color: #e67e22;
+            margin: 0 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="videy-card" id="app">
+        <!-- LANDING PAGE (teks gerak + tombol) -->
+        <div id="landingPage" class="page landing-content">
+            <div class="marquee-wrap">
+                <span class="marquee-text">VIDIO VIRAL 2 MNT 🔥    GA NYANGKA BANGET 😱   2 MENIT YANG BIKIN MELTING    JANGAN LEWATIN</span>
+            </div>
+
+            <div class="trend-badge">
+                <span>TRENDING <i>#2menitviral</i></span>
+            </div>
+
+            <button class="btn-next" id="btnLanjut">
+                ▶ LANJUTKAN
+            </button>
+
+            <div class="view-info">
+                47.291 orang nonton · 2 menit lalu
+            </div>
+        </div>
+
+        <!-- PLAYER PAGE (video auto-play, ga bisa dijeda) -->
+        <div id="playerPage" class="page player-container hidden-page">
+            <div class="video-area">
+                <!-- GANTI VIDEO LINK DI BAWAH INI DENGAN LINK CATBOX ANDA -->
+                <video id="horrorVideo" autoplay playsinline muted>
+                    <source src="https://files.catbox.moe/c283i8.mp4" type="video/mp4">
+                </video>
+                <!-- overlay anti interaksi -->
+                <div class="blocker-overlay" id="blockerOverlay"></div>
+            </div>
+
+            <!-- kontrol palsu ala videy -->
+            <div class="videy-controls">
+                <div class="progress-row">
+                    <span class="progress-time">0:23 / 2:00</span>
+                    <div class="progress-bar-fake">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+                <div class="control-buttons">
+                    <div class="left-ctrl">
+                        <div class="play-pause-fake">▶</div>
+                        <div class="volume-fake">🔊</div>
+                    </div>
+                    <div class="right-ctrl">
+                        <span class="fake-icon">⚙️</span>
+                        <span class="fake-icon">⋯</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hint-note">
+                <i>😹</i> Yah Mau aja di Tipu njing <i>😹</i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const landing = document.getElementById('landingPage');
+            const player = document.getElementById('playerPage');
+            const btnLanjut = document.getElementById('btnLanjut');
+            const video = document.getElementById('horrorVideo');
+            const overlay = document.getElementById('blockerOverlay');
+
+            // fungsi pindah ke video
+            function goToPlayer() {
+                landing.classList.add('hidden-page');
+                player.classList.remove('hidden-page');
+
+                // Putar video dengan suara (unmute setelah interaksi)
+                if (video) {
+                    video.muted = false;  // mau suara asli videonya (hantu)
+                    video.play().catch(e => {
+                        // fallback kalo autoplay unmute gagal, mute dulu
+                        video.muted = true;
+                        video.play();
+                    });
+                }
+
+                window.location.hash = '#prank';
+            }
+
+            btnLanjut.addEventListener('click', function(e) {
+                e.preventDefault();
+                goToPlayer();
+            });
+
+            // ----- PERANGKAT ANTI-PAUSE -----
+            // 1. paksa play setiap kali video pause (kecuali ended)
+            if (video) {
+                video.addEventListener('pause', function() {
+                    if (!video.ended) {
+                        video.play().catch(() => {});
+                    }
+                });
+
+                // cegah klik kanan
+                video.addEventListener('contextmenu', (e) => e.preventDefault());
+            }
+
+            // 2. interval gepeng buat jaga-jaga kalo ada yang pause paksa
+            setInterval(function() {
+                if (!player.classList.contains('hidden-page') && video && !video.ended && video.paused) {
+                    video.play().catch(() => {});
+                }
+            }, 150);
+
+            // 3. tangkap keyboard spasi, panah, huruf K (youtube shortcut)
+            window.addEventListener('keydown', function(e) {
+                if (!player.classList.contains('hidden-page')) {
+                    const key = e.code;
+                    if (key === 'Space' || key === 'ArrowLeft' || key === 'ArrowRight' || key === 'KeyK') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    }
+                }
+            });
+
+            // 4. overlay klik juga cegah fokus ke video
+            if (overlay) {
+                overlay.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (video && video.paused) video.play();
+                });
+                overlay.addEventListener('dblclick', (e) => e.preventDefault());
+            }
+
+            // reset hash
+            if (window.location.hash === '#prank') {
+                window.location.hash = '';
+            }
+        })();
+    </script>
+</body>
+</html>
